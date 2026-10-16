@@ -1,0 +1,104 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+
+  fmt:
+    desc: Format Go code (gofmt + goimports)
+    cmds:
+      - go tool golangci-lint fmt
+
+  lint:
+    desc: Lint Go code (includes go vet via golangci-lint)
+    cmds:
+      - go tool golangci-lint run ./...
+
+  test:
+    desc: Run unit and CLI tests (hermetic, no network)
+    cmds:
+      - go tool gotestsum --junitfile test-results/unit.xml -- ./...
+
+  acceptance:
+    desc: Run acceptance tests (network required)
+    cmds:
+      - go tool gotestsum --junitfile test-results/acceptance.xml --format standard-verbose -- -tags acceptance -timeout 20m ./acceptance/...
+
+  tidy:
+    desc: Tidy go.mod / go.sum
+    cmds:
+      - go mod tidy
+
+  lint-tasks:
+    desc: Check every task the CI config invokes exists
+    cmds:
+      - |
+        set -eu
+        defined=" $(grep -oE '^  [a-z][a-z-]*:' Taskfile.yml | tr -d ' :' | tr '\n' ' ')"
+        missing=""
+        for t in $(grep -v '^[[:space:]]*#' .circleci/config.yml \
+                   | grep -oE 'task [a-z][a-z-]*' | awk '{print $2}' | sort -u); do
+          case "$defined" in *" $t "*) ;; *) missing="$missing $t" ;; esac
+        done
+        if [ -n "$missing" ]; then
+          echo "CI config invokes tasks that do not exist:$missing" >&2
+          exit 1
+        fi
+
+  lint-mod:
+    desc: Check go.mod / go.sum are tidy
+    deps: [tidy]
+    cmds:
+      - git diff --exit-code -- go.mod go.sum
+
+  dry-run:
+    desc: Cross-compile setup-dotnet locally, without uploading
+    cmds:
+      - go tool release --name setup-dotnet --version v0.0.0-dryrun --dry-run
+
+  build-acceptance:
+    desc: Cross-compile the acceptance suite
+    cmds:
+      - |
+        set -eu
+        for platform in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do
+          os="${platform%/*}"; arch="${platform#*/}"
+          ext=""; [ "$os" = "windows" ] && ext=".exe"
+          out="dist/acceptance/$os/$arch/acceptance${ext}"
+          CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go test -c -tags acceptance -o "$out" ./acceptance
+          echo "built $out"
+        done
+
+  build-tools:
+    desc: Cross-compile test2json and gotestsum
+    cmds:
+      - |
+        set -eu
+        for platform in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do
+          os="${platform%/*}"; arch="${platform#*/}"
+          ext=""; [ "$os" = "windows" ] && ext=".exe"
+          for tool in cmd/test2json gotest.tools/gotestsum; do
+            name="${tool##*/}"
+            CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" \
+              go build -o "dist/tools/$os/$arch/${name}${ext}" "$tool"
+          done
+          echo "built dist/tools/$os/$arch/{test2json,gotestsum}${ext}"
+        done
+
+  ci:
+    desc: Run everything CI runs (lint + test + dry-run)
+    cmds:
+      - task: lint
+      - task: lint-tasks
+      - task: test
+      - task: dry-run
+
+  publish:
+    desc: Build and publish setup-dotnet to S3 (VERSION required)
+    requires:
+      vars: [VERSION]
+    cmds:
+      - go tool release --name setup-dotnet --version "{{.VERSION}}"
+
