@@ -1,0 +1,218 @@
+version: 2.1
+
+orbs:
+  toolkit: https://raw.githubusercontent.com/circleci-functions/toolkit/refs/heads/main/orbs/toolkit.yml
+
+parameters:
+  dotnet-version:
+    type: string
+    default: "10.0"
+    description: >-
+      .NET SDK version for the acceptance and smoke tests to install.
+
+executors:
+  go:
+    docker:
+      - image: cimg/go:1.26
+  base:
+    docker:
+      - image: cimg/base:stable
+  # musl, with the libraries .NET needs and no .NET.
+  alpine:
+    docker:
+      - image: mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine
+  # Ships its own .NET on PATH, a different major from the one the smoke test
+  # installs, so the test shows setup-dotnet's comes first.
+  dotnet:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:9.0
+  arm64:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.medium
+  macos:
+    macos:
+      xcode: "16.4.0"
+  windows:
+    machine:
+      image: windows-server-2022-gui:current
+      shell: bash.exe -eo pipefail
+    resource_class: windows.medium
+
+jobs:
+  test:
+    executor: go
+    steps:
+      - checkout
+      - toolkit/private-mod-init
+      - restore_cache:
+          keys:
+            - setup-dotnet-go-{{ checksum "go.sum" }}-
+            - setup-dotnet-go-
+      - run: task lint
+      - run: task lint-tasks
+      - run: task test
+      - store_test_results:
+          path: test-results
+      - save_cache:
+          key: setup-dotnet-go-{{ checksum "go.sum" }}-{{ epoch }}
+          paths:
+            - ~/.cache/go-build
+            - ~/go/pkg/mod
+
+  # Real .NET downloads, a real solution restored and tested, and a real
+  # task-agent cache (TOOLKIT_CACHE_MODE=live). Runs on the go executor because
+  # the suite compiles setup-dotnet in TestMain.
+  acceptance:
+    executor: go
+    steps:
+      - checkout
+      - toolkit/private-mod-init
+      - restore_cache:
+          keys:
+            - setup-dotnet-go-{{ checksum "go.sum" }}-
+            - setup-dotnet-go-
+      - run:
+          name: Run acceptance tests
+          command: task acceptance -- -skip '^TestAcceptance_InstallsOntoTheRealPath$'
+          environment:
+            # Use the job's own cache rather than the in-memory stand-in, so the
+            # round-trips exercise the real thing. The suite fails rather than
+            # falling back if it can't reach it.
+            TOOLKIT_CACHE_MODE: live
+            SETUP_DOTNET_ACCEPTANCE_VERSION: << pipeline.parameters.dotnet-version >>
+            DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      - store_test_results:
+          path: test-results
+
+  # Cross-compiles setup-dotnet into ./dist and persists it to the workspace,
+  # so the smoke jobs exercise exactly what `publish` is about to ship.
+  build:
+    executor: go
+    steps:
+      - checkout
+      - toolkit/private-mod-init
+      - restore_cache:
+          keys:
+            - setup-dotnet-go-{{ checksum "go.sum" }}-
+            - setup-dotnet-go-
+      - run: task dry-run
+      - run: task build-acceptance
+      - run: task build-tools
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+
+  smoke:
+    description: >-
+      Let setup-dotnet pick where .NET goes on this executor and where dotnet
+      is linked, then resolve dotnet and run an apphost in processes that
+      sourced nothing, and DOTNET_ROOT in one that sources $BASH_ENV.
+
+      Everything runs from the workspace, so the executor needs no Go, no
+      modules and no checkout: the suite is a cross-compiled test binary, and
+      test2json and gotestsum turn its output into the JUnit CircleCI collects.
+    parameters:
+      e:
+        type: executor
+        description: The executor to smoke test on.
+      platform:
+        type: string
+        description: The os/arch whose artifacts to run, e.g. linux/amd64.
+      ext:
+        type: string
+        default: ""
+        description: Executable suffix for the platform.
+    executor: << parameters.e >>
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install .NET onto PATH and run it afterwards
+          command: |
+            mkdir -p test-results
+            ./dist/tools/<< parameters.platform >>/gotestsum<< parameters.ext >> \
+              --junitfile test-results/smoke.xml \
+              --format standard-verbose \
+              --raw-command -- \
+              ./dist/tools/<< parameters.platform >>/test2json<< parameters.ext >> \
+                -p acceptance \
+                ./dist/acceptance/<< parameters.platform >>/acceptance<< parameters.ext >> \
+                -test.v=test2json -test.run TestAcceptance_InstallsOntoTheRealPath
+          environment:
+            SETUP_DOTNET_BINARY: ./dist/setup-dotnet/<< parameters.platform >>/setup-dotnet<< parameters.ext >>
+            SETUP_DOTNET_ACCEPTANCE_VERSION: << pipeline.parameters.dotnet-version >>
+            DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      - store_test_results:
+          path: test-results
+
+workflows:
+  test-publish:
+    jobs:
+      - test:
+          context: [github-readonly]
+      - acceptance:
+          context: [github-readonly]
+      - build:
+          context: [github-readonly]
+      - smoke:
+          name: smoke-linux-amd64
+          e: base
+          platform: linux/amd64
+          requires: [build]
+      - smoke:
+          name: smoke-linux-arm64
+          e: arm64
+          platform: linux/arm64
+          requires: [build]
+      - smoke:
+          name: smoke-alpine
+          e: alpine
+          platform: linux/amd64
+          requires: [build]
+      - smoke:
+          name: smoke-dotnet
+          e: dotnet
+          platform: linux/amd64
+          requires: [build]
+      - smoke:
+          name: smoke-macos
+          e: macos
+          platform: darwin/arm64
+          requires: [build]
+      - smoke:
+          name: smoke-windows
+          e: windows
+          platform: windows/amd64
+          ext: ".exe"
+          requires: [build]
+      - toolkit/release-pr:
+          name: release-pr
+          executor: go
+          cache-prefix: setup-dotnet-go
+          # One at a time, so two pushes can't race to rewrite release/next.
+          serial-group: << pipeline.project.slug >>/release-pr
+          requires: &release-requires
+            - test
+            - acceptance
+            - smoke-linux-amd64
+            - smoke-linux-arm64
+            - smoke-alpine
+            - smoke-dotnet
+            - smoke-macos
+            - smoke-windows
+          context: [github-release]
+          filters:
+            branches:
+              only: main
+      - toolkit/publish:
+          name: publish
+          executor: go
+          cache-prefix: setup-dotnet-go
+          serial-group: << pipeline.project.slug >>/publish
+          requires: *release-requires
+          context: [functions-publisher, github-release]
+          filters:
+            branches:
+              only: main

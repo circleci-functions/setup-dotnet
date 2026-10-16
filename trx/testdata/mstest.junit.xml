@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Sample.mstest.Tests" tests="5" failures="1" skipped="1" time="0.013" timestamp="2026-10-16T17:44:47">
+    <testcase classname="Sample.mstest.Tests.CalculatorTests" name="Increments (1,2)" time="0.003" file="Sample.mstest.Tests/Sample.mstest.Tests.csproj"></testcase>
+    <testcase classname="Sample.mstest.Tests.CalculatorTests" name="Skipped" time="0.000" file="Sample.mstest.Tests/Sample.mstest.Tests.csproj">
+      <skipped message="not ready"></skipped>
+    </testcase>
+    <testcase classname="Sample.mstest.Tests.CalculatorTests" name="Fails" time="0.006" file="Sample.mstest.Tests/Sample.mstest.Tests.csproj">
+      <failure message="Assert.AreEqual failed. Expected:&lt;5&gt;. Actual:&lt;4&gt;. &#39;expected&#39; expression: &#39;5&#39;, &#39;actual&#39; expression: &#39;2 + 2&#39;.">Assert.AreEqual failed. Expected:&lt;5&gt;. Actual:&lt;4&gt;. &#39;expected&#39; expression: &#39;5&#39;, &#39;actual&#39; expression: &#39;2 + 2&#39;.&#xA;at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowAssertAreEqualFailed(Object expected, Object actual, String userMessage) in /_/src/TestFramework/TestFramework/Assertions/Assert.AreEqual.cs:line 665&#xA;   at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual[T](T expected, T actual, IEqualityComparer`1 comparer, String message, String expectedExpression, String actualExpression) in /_/src/TestFramework/TestFramework/Assertions/Assert.AreEqual.cs:line 492&#xA;   at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual[T](T expected, T actual, String message, String expectedExpression, String actualExpression) in /_/src/TestFramework/TestFramework/Assertions/Assert.AreEqual.cs:line 405&#xA;   at Sample.mstest.Tests.CalculatorTests.Fails() in /home/circleci/project/Sample.mstest.Tests/Test1.cs:line 13&#xA;   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xA;   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</failure>
+      <system-out>output from a failing test</system-out>
+    </testcase>
+    <testcase classname="Sample.mstest.Tests.CalculatorTests" name="Adds" time="0.003" file="Sample.mstest.Tests/Sample.mstest.Tests.csproj"></testcase>
+    <testcase classname="Sample.mstest.Tests.CalculatorTests" name="Increments (2,3)" time="0.003" file="Sample.mstest.Tests/Sample.mstest.Tests.csproj"></testcase>
+  </testsuite>
+</testsuites>

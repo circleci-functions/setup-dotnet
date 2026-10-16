@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="79ead4e4-05ea-456d-913d-52c2184b3ebf" name="@runner 2026-10-16 18:01:54.6324560" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T18:01:54.567201Z" queuing="2026-10-16T18:01:54.567201Z" start="2026-10-16T18:01:54.567201Z" finish="2026-10-16T18:01:54.632653Z" />
+  <TestSettings name="default" id="bc414e77-bfb5-44c8-81a7-7e4d4b803bf8">
+    <Deployment runDeploymentRoot="_runner_2026-10-16_18_01_54.6324560" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="dae5d953-6757-4e21-aa6b-ab736900e836" testId="1ec1ffc0-e3c2-87e7-96a6-31b805841f9c" testName="Skipped" computerName="runner" duration="00:00:00.0000000" startTime="2026-10-16T18:01:54.6129310+00:00" endTime="2026-10-16T18:01:54.6167770+00:00" testType="13CDC9D9-DDB5-4fa4-A97D-D965CCFC6D4B" outcome="NotExecuted" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" relativeResultsDirectory="dae5d953-6757-4e21-aa6b-ab736900e836">
+      <Output>
+        <ErrorInfo>
+          <Message>not ready</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9f90d4a9-47e7-466f-bc67-78169a19199c" testId="1aa0d57a-2eaa-8d8c-8499-4d4d0ed9d77e" testName="Adds" computerName="runner" duration="00:00:00.0030578" startTime="2026-10-16T18:01:54.6129710+00:00" endTime="2026-10-16T18:01:54.6228740+00:00" testType="13CDC9D9-DDB5-4fa4-A97D-D965CCFC6D4B" outcome="Passed" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" relativeResultsDirectory="9f90d4a9-47e7-466f-bc67-78169a19199c" />
+    <UnitTestResult executionId="48e877ad-7162-4d90-b02f-7762d0522faf" testId="10723758-4867-88b2-9514-b0d19f57d22e" testName="Increments (2,3)" computerName="runner" duration="00:00:00.0030535" startTime="2026-10-16T18:01:54.6129300+00:00" endTime="2026-10-16T18:01:54.6228810+00:00" testType="13CDC9D9-DDB5-4fa4-A97D-D965CCFC6D4B" outcome="Passed" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" relativeResultsDirectory="48e877ad-7162-4d90-b02f-7762d0522faf" />
+    <UnitTestResult executionId="076c0bd1-ff4c-4224-bc1c-68d0e0b2be81" testId="1ce46d54-b0fe-805b-92e0-55de66e8e87e" testName="Increments (1,2)" computerName="runner" duration="00:00:00.0030755" startTime="2026-10-16T18:01:54.6129720+00:00" endTime="2026-10-16T18:01:54.6228860+00:00" testType="13CDC9D9-DDB5-4fa4-A97D-D965CCFC6D4B" outcome="Passed" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" relativeResultsDirectory="076c0bd1-ff4c-4224-bc1c-68d0e0b2be81" />
+    <UnitTestResult executionId="395eff3c-719c-4af6-a196-e989a549c519" testId="1e8775a7-c2e7-8673-b696-082ca4f9ec1e" testName="Fails" computerName="runner" duration="00:00:00.0080565" startTime="2026-10-16T18:01:54.6129360+00:00" endTime="2026-10-16T18:01:54.6280600+00:00" testType="13CDC9D9-DDB5-4fa4-A97D-D965CCFC6D4B" outcome="Failed" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" relativeResultsDirectory="395eff3c-719c-4af6-a196-e989a549c519">
+      <Output>
+        <StdOut>output from a failing test
+</StdOut>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;5&gt;. Actual:&lt;4&gt;. 'expected' expression: '5', 'actual' expression: '2 + 2'.</Message>
+          <StackTrace>   at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.ThrowAssertAreEqualFailed(Object expected, Object actual, String userMessage) in /_/src/TestFramework/TestFramework/Assertions/Assert.AreEqual.cs:line 665
+   at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual[T](T expected, T actual, IEqualityComparer`1 comparer, String message, String expectedExpression, String actualExpression) in /_/src/TestFramework/TestFramework/Assertions/Assert.AreEqual.cs:line 492
+   at Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual[T](T expected, T actual, String message, String expectedExpression, String actualExpression) in /_/src/TestFramework/TestFramework/Assertions/Assert.AreEqual.cs:line 405
+   at Sample.mstest.Tests.CalculatorTests.Fails() in /home/circleci/project/Sample.mstest.Tests/Test1.cs:line 13
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Skipped" storage="/home/circleci/project/sample.mstest.tests/bin/debug/net10.0/sample.mstest.tests.dll" id="1ec1ffc0-e3c2-87e7-96a6-31b805841f9c">
+      <Execution id="dae5d953-6757-4e21-aa6b-ab736900e836" />
+      <TestMethod codeBase="/home/circleci/project/Sample.mstest.Tests/bin/Debug/net10.0/Sample.mstest.Tests.dll" adapterTypeName="executor://MSTestExtension/4.0.2" className="Sample.mstest.Tests.CalculatorTests" name="Skipped" />
+    </UnitTest>
+    <UnitTest name="Adds" storage="/home/circleci/project/sample.mstest.tests/bin/debug/net10.0/sample.mstest.tests.dll" id="1aa0d57a-2eaa-8d8c-8499-4d4d0ed9d77e">
+      <Execution id="9f90d4a9-47e7-466f-bc67-78169a19199c" />
+      <TestMethod codeBase="/home/circleci/project/Sample.mstest.Tests/bin/Debug/net10.0/Sample.mstest.Tests.dll" adapterTypeName="executor://MSTestExtension/4.0.2" className="Sample.mstest.Tests.CalculatorTests" name="Adds" />
+    </UnitTest>
+    <UnitTest name="Increments (2,3)" storage="/home/circleci/project/sample.mstest.tests/bin/debug/net10.0/sample.mstest.tests.dll" id="10723758-4867-88b2-9514-b0d19f57d22e">
+      <Execution id="48e877ad-7162-4d90-b02f-7762d0522faf" />
+      <TestMethod codeBase="/home/circleci/project/Sample.mstest.Tests/bin/Debug/net10.0/Sample.mstest.Tests.dll" adapterTypeName="executor://MSTestExtension/4.0.2" className="Sample.mstest.Tests.CalculatorTests" name="Increments (2,3)" />
+    </UnitTest>
+    <UnitTest name="Increments (1,2)" storage="/home/circleci/project/sample.mstest.tests/bin/debug/net10.0/sample.mstest.tests.dll" id="1ce46d54-b0fe-805b-92e0-55de66e8e87e">
+      <Execution id="076c0bd1-ff4c-4224-bc1c-68d0e0b2be81" />
+      <TestMethod codeBase="/home/circleci/project/Sample.mstest.Tests/bin/Debug/net10.0/Sample.mstest.Tests.dll" adapterTypeName="executor://MSTestExtension/4.0.2" className="Sample.mstest.Tests.CalculatorTests" name="Increments (1,2)" />
+    </UnitTest>
+    <UnitTest name="Fails" storage="/home/circleci/project/sample.mstest.tests/bin/debug/net10.0/sample.mstest.tests.dll" id="1e8775a7-c2e7-8673-b696-082ca4f9ec1e">
+      <Execution id="395eff3c-719c-4af6-a196-e989a549c519" />
+      <TestMethod codeBase="/home/circleci/project/Sample.mstest.Tests/bin/Debug/net10.0/Sample.mstest.Tests.dll" adapterTypeName="executor://MSTestExtension/4.0.2" className="Sample.mstest.Tests.CalculatorTests" name="Fails" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1ec1ffc0-e3c2-87e7-96a6-31b805841f9c" executionId="dae5d953-6757-4e21-aa6b-ab736900e836" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" />
+    <TestEntry testId="1aa0d57a-2eaa-8d8c-8499-4d4d0ed9d77e" executionId="9f90d4a9-47e7-466f-bc67-78169a19199c" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" />
+    <TestEntry testId="10723758-4867-88b2-9514-b0d19f57d22e" executionId="48e877ad-7162-4d90-b02f-7762d0522faf" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" />
+    <TestEntry testId="1ce46d54-b0fe-805b-92e0-55de66e8e87e" executionId="076c0bd1-ff4c-4224-bc1c-68d0e0b2be81" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" />
+    <TestEntry testId="1e8775a7-c2e7-8673-b696-082ca4f9ec1e" executionId="395eff3c-719c-4af6-a196-e989a549c519" testListId="8C84FA94-04C1-424b-9868-57A2D4851A1D" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8C84FA94-04C1-424b-9868-57A2D4851A1D" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="4" passed="3" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="1" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <RunInfos>
+      <RunInfo computerName="runner" outcome="Error" timestamp="2026-10-16T18:01:54.636024">
+        <Text>Exit code indicates failure: '2'. Please refer to https://aka.ms/testingplatform/exitcodes for more information.</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
