@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Sample.xunit.Tests" tests="5" failures="1" skipped="1" time="0.006" timestamp="2026-10-16T17:45:01">
+    <testcase classname="Sample.xunit.Tests.CalculatorTests" name="Fails" time="0.002" file="Sample.xunit.Tests/Sample.xunit.Tests.csproj">
+      <failure message="Assert.Equal() Failure: Values differ">Assert.Equal() Failure: Values differ&#xA;Expected: 5&#xA;Actual:   4&#xA;at Sample.xunit.Tests.CalculatorTests.Fails() in /home/circleci/project/Sample.xunit.Tests/UnitTest1.cs:line 12&#xA;   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xA;   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</failure>
+    </testcase>
+    <testcase classname="Sample.xunit.Tests.CalculatorTests" name="Adds" time="0.000" file="Sample.xunit.Tests/Sample.xunit.Tests.csproj"></testcase>
+    <testcase classname="Sample.xunit.Tests.CalculatorTests" name="Increments(a: 2, b: 3)" time="0.000" file="Sample.xunit.Tests/Sample.xunit.Tests.csproj"></testcase>
+    <testcase classname="Sample.xunit.Tests.CalculatorTests" name="Increments(a: 1, b: 2)" time="0.003" file="Sample.xunit.Tests/Sample.xunit.Tests.csproj"></testcase>
+    <testcase classname="Sample.xunit.Tests.CalculatorTests" name="Skipped" time="0.001" file="Sample.xunit.Tests/Sample.xunit.Tests.csproj">
+      <skipped message="not ready"></skipped>
+    </testcase>
+  </testsuite>
+</testsuites>

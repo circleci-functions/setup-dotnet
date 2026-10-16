@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Sample.nunit.Tests" tests="5" failures="1" skipped="1" time="0.012" timestamp="2026-10-16T17:44:54">
+    <testcase classname="Sample.nunit.Tests.CalculatorTests" name="Skipped" time="0.000" file="Sample.nunit.Tests/Sample.nunit.Tests.csproj">
+      <skipped message="not ready"></skipped>
+      <system-out>not ready</system-out>
+    </testcase>
+    <testcase classname="Sample.nunit.Tests.CalculatorTests" name="Increments(2,3)" time="0.000" file="Sample.nunit.Tests/Sample.nunit.Tests.csproj"></testcase>
+    <testcase classname="Sample.nunit.Tests.CalculatorTests" name="Adds" time="0.002" file="Sample.nunit.Tests/Sample.nunit.Tests.csproj"></testcase>
+    <testcase classname="Sample.nunit.Tests.CalculatorTests" name="Fails" time="0.010" file="Sample.nunit.Tests/Sample.nunit.Tests.csproj">
+      <failure message="Assert.That(2 + 2, Is.EqualTo(5))">Assert.That(2 + 2, Is.EqualTo(5))&#xA;  Expected: 5&#xA;  But was:  4&#xA;at Sample.nunit.Tests.CalculatorTests.Fails() in /home/circleci/project/Sample.nunit.Tests/UnitTest1.cs:line 12&#xA;&#xA;1)    at Sample.nunit.Tests.CalculatorTests.Fails() in /home/circleci/project/Sample.nunit.Tests/UnitTest1.cs:line 12</failure>
+      <system-out>output from a failing test</system-out>
+    </testcase>
+    <testcase classname="Sample.nunit.Tests.CalculatorTests" name="Increments(1,2)" time="0.000" file="Sample.nunit.Tests/Sample.nunit.Tests.csproj"></testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7a4909aa-4513-47ea-9fb0-c055ae2f589e" name="@runner" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T13:44:54.5856630-04:00" queuing="2026-10-16T13:44:54.5856630-04:00" start="2026-10-16T13:44:54.3086960-04:00" finish="2026-10-16T13:44:54.5881400-04:00" />
+  <TestSettings name="default" id="4e9794b7-9c17-4403-96d5-098eb187194e">
+    <Deployment runDeploymentRoot="_runner_2026-10-16_13_44_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3339f7fd-fdce-446d-927e-4ac24d9c5266" testId="7f8f1b31-a9fe-d60d-8bc5-2f9a82d0ad96" testName="Skipped" computerName="runner" duration="00:00:00.0000660" startTime="2026-10-16T13:44:54.5421000-04:00" endTime="2026-10-16T13:44:54.5421660-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3339f7fd-fdce-446d-927e-4ac24d9c5266">
+      <Output>
+        <StdOut>not ready</StdOut>
+        <ErrorInfo>
+          <Message>not ready</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="eb1f6eaf-599e-4e7e-af2d-461881c9ffe4" testId="88b96228-aab5-8240-6e11-867b1faa9298" testName="Increments(2,3)" computerName="runner" duration="00:00:00.0000800" startTime="2026-10-16T13:44:54.5416100-04:00" endTime="2026-10-16T13:44:54.5416900-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb1f6eaf-599e-4e7e-af2d-461881c9ffe4" />
+    <UnitTestResult executionId="c4480469-dd93-4057-9348-cfe3c80f349a" testId="4325c968-edf7-175d-55c8-7ba5a8f433f3" testName="Adds" computerName="runner" duration="00:00:00.0018980" startTime="2026-10-16T13:44:54.5291800-04:00" endTime="2026-10-16T13:44:54.5310590-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c4480469-dd93-4057-9348-cfe3c80f349a" />
+    <UnitTestResult executionId="6f52e4d9-ba1d-49de-8bba-a9cdce81a23f" testId="b0d83dba-26f6-b739-7b24-a1eeb08eaac3" testName="Fails" computerName="runner" duration="00:00:00.0099370" startTime="2026-10-16T13:44:54.5315730-04:00" endTime="2026-10-16T13:44:54.5415100-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f52e4d9-ba1d-49de-8bba-a9cdce81a23f">
+      <Output>
+        <StdOut>output from a failing test</StdOut>
+        <ErrorInfo>
+          <Message>  Assert.That(2 + 2, Is.EqualTo(5))
+  Expected: 5
+  But was:  4
+</Message>
+          <StackTrace>   at Sample.nunit.Tests.CalculatorTests.Fails() in /home/circleci/project/Sample.nunit.Tests/UnitTest1.cs:line 12
+
+1)    at Sample.nunit.Tests.CalculatorTests.Fails() in /home/circleci/project/Sample.nunit.Tests/UnitTest1.cs:line 12
+
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bf317d1c-428e-4f55-957c-43a162eff647" testId="0f4d754d-9d1e-0268-3b0f-1fee1ac8f2ee" testName="Increments(1,2)" computerName="runner" duration="00:00:00.0000360" startTime="2026-10-16T13:44:54.5415710-04:00" endTime="2026-10-16T13:44:54.5416070-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf317d1c-428e-4f55-957c-43a162eff647" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Skipped" storage="/home/circleci/project/sample.nunit.tests/bin/debug/net10.0/sample.nunit.tests.dll" id="7f8f1b31-a9fe-d60d-8bc5-2f9a82d0ad96">
+      <Execution id="3339f7fd-fdce-446d-927e-4ac24d9c5266" />
+      <TestMethod codeBase="/home/circleci/project/Sample.nunit.Tests/bin/Debug/net10.0/Sample.nunit.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="Sample.nunit.Tests.CalculatorTests" name="Skipped" />
+    </UnitTest>
+    <UnitTest name="Increments(1,2)" storage="/home/circleci/project/sample.nunit.tests/bin/debug/net10.0/sample.nunit.tests.dll" id="0f4d754d-9d1e-0268-3b0f-1fee1ac8f2ee">
+      <Execution id="bf317d1c-428e-4f55-957c-43a162eff647" />
+      <TestMethod codeBase="/home/circleci/project/Sample.nunit.Tests/bin/Debug/net10.0/Sample.nunit.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="Sample.nunit.Tests.CalculatorTests" name="Increments(1,2)" />
+    </UnitTest>
+    <UnitTest name="Fails" storage="/home/circleci/project/sample.nunit.tests/bin/debug/net10.0/sample.nunit.tests.dll" id="b0d83dba-26f6-b739-7b24-a1eeb08eaac3">
+      <Execution id="6f52e4d9-ba1d-49de-8bba-a9cdce81a23f" />
+      <TestMethod codeBase="/home/circleci/project/Sample.nunit.Tests/bin/Debug/net10.0/Sample.nunit.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="Sample.nunit.Tests.CalculatorTests" name="Fails" />
+    </UnitTest>
+    <UnitTest name="Increments(2,3)" storage="/home/circleci/project/sample.nunit.tests/bin/debug/net10.0/sample.nunit.tests.dll" id="88b96228-aab5-8240-6e11-867b1faa9298">
+      <Execution id="eb1f6eaf-599e-4e7e-af2d-461881c9ffe4" />
+      <TestMethod codeBase="/home/circleci/project/Sample.nunit.Tests/bin/Debug/net10.0/Sample.nunit.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="Sample.nunit.Tests.CalculatorTests" name="Increments(2,3)" />
+    </UnitTest>
+    <UnitTest name="Adds" storage="/home/circleci/project/sample.nunit.tests/bin/debug/net10.0/sample.nunit.tests.dll" id="4325c968-edf7-175d-55c8-7ba5a8f433f3">
+      <Execution id="c4480469-dd93-4057-9348-cfe3c80f349a" />
+      <TestMethod codeBase="/home/circleci/project/Sample.nunit.Tests/bin/Debug/net10.0/Sample.nunit.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="Sample.nunit.Tests.CalculatorTests" name="Adds" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7f8f1b31-a9fe-d60d-8bc5-2f9a82d0ad96" executionId="3339f7fd-fdce-446d-927e-4ac24d9c5266" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88b96228-aab5-8240-6e11-867b1faa9298" executionId="eb1f6eaf-599e-4e7e-af2d-461881c9ffe4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4325c968-edf7-175d-55c8-7ba5a8f433f3" executionId="c4480469-dd93-4057-9348-cfe3c80f349a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0d83dba-26f6-b739-7b24-a1eeb08eaac3" executionId="6f52e4d9-ba1d-49de-8bba-a9cdce81a23f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f4d754d-9d1e-0268-3b0f-1fee1ac8f2ee" executionId="bf317d1c-428e-4f55-957c-43a162eff647" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="4" passed="3" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 5.0.0.0: Test execution started
+Running all tests in /home/circleci/project/Sample.nunit.Tests/bin/Debug/net10.0/Sample.nunit.Tests.dll
+   NUnit3TestExecutor discovered 5 of 5 NUnit test cases using Current Discovery mode, Non-Explicit run
+output from a failing test
+
+Skipped: not ready
+NUnit Adapter 5.0.0.0: Test execution complete
+Test 'Skipped' was skipped in the test run.
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
