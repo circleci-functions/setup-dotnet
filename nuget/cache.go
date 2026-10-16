@@ -20,6 +20,8 @@ import (
 	"time"
 
 	"github.com/bmatcuk/doublestar/v4"
+
+	"github.com/circleci-functions/setup-dotnet/internal/cachekey"
 )
 
 // rotation is how often the cache keys start over. A restore reaches back to
@@ -109,11 +111,11 @@ func Hash(dir string, files []string) (string, error) {
 	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
-// Keys returns the key to save under and the keys to restore from, best
+// Keys returns the key to save dir under and the keys to restore from, best
 // first: the same dependencies, then any entry from the same window.
-func Keys(osArch, hash string, now time.Time) (string, []string) {
+func Keys(osArch, dir, hash string, now time.Time) (string, []string) {
 	secs := int64(rotation.Seconds())
-	window := fmt.Sprintf("setup-dotnet-nuget-v1-%s-%d-", osArch, now.Unix()/secs*secs)
+	window := fmt.Sprintf("setup-dotnet-nuget-v1-%s-%s-%d-", osArch, cachekey.Path(dir), now.Unix()/secs*secs)
 	return window + hash, []string{window + hash, window}
 }
 

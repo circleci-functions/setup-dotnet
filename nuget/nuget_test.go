@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 
@@ -75,12 +76,16 @@ func TestHash(t *testing.T) {
 
 func TestKeys(t *testing.T) {
 	now := time.Unix(1_760_000_000, 0)
-	save, restore := nuget.Keys("linux-amd64", "abc", now)
-	assert.Equal(t, save, "setup-dotnet-nuget-v1-linux-amd64-1759968000-abc")
-	assert.DeepEqual(t, restore, []string{save, "setup-dotnet-nuget-v1-linux-amd64-1759968000-"})
+	dir := filepath.Join(string(filepath.Separator)+"home", "u", ".nuget", "packages")
+	save, restore := nuget.Keys("linux-amd64", dir, "abc", now)
+	assert.Assert(t, strings.HasPrefix(save, "setup-dotnet-nuget-v1-linux-amd64-"), save)
+	assert.Assert(t, strings.HasSuffix(save, "-1759968000-abc"), save)
+	assert.DeepEqual(t, restore, []string{save, strings.TrimSuffix(save, "abc")})
 
-	later, _ := nuget.Keys("linux-amd64", "abc", now.Add(72*time.Hour))
+	later, _ := nuget.Keys("linux-amd64", dir, "abc", now.Add(72*time.Hour))
 	assert.Assert(t, later != save, "keys rotate")
+	other, _ := nuget.Keys("linux-amd64", filepath.Join(string(filepath.Separator)+"root", ".nuget", "packages"), "abc", now)
+	assert.Assert(t, other != save, "a cache at another path gets another key, since it restores to the path it was saved from")
 }
 
 func TestGlobalPackagesDir(t *testing.T) {

@@ -10,6 +10,7 @@ import (
 	"slices"
 
 	"github.com/circleci-functions/setup-dotnet/dotnetversion"
+	"github.com/circleci-functions/setup-dotnet/internal/cachekey"
 )
 
 // Cache keeps downloaded archives between jobs.
@@ -69,7 +70,7 @@ func (i *Installer) Install(ctx context.Context, a dotnetversion.Artifact) (bool
 
 func (i *Installer) fetch(ctx context.Context, a dotnetversion.Artifact) (string, error) {
 	archivePath := filepath.Join(i.CacheDir, a.FileName())
-	key := "setup-dotnet-archive-v1-" + a.FileName() + i.CacheKeySuffix
+	key := "setup-dotnet-archive-v1-" + a.FileName() + "-" + cachekey.Path(archivePath) + i.CacheKeySuffix
 	if i.Cache != nil && !verify(archivePath, a.SHA512) {
 		i.Cache.Restore(ctx, key)
 	}

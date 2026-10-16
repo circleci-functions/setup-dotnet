@@ -454,7 +454,7 @@ func (c *installCmd) setUpNuGetCache(ctx context.Context, client *sdk.Client, ro
 		logf("NuGet cache skipped: %v", err)
 		return
 	}
-	save, restore := nuget.Keys(sdk.OSArch(), hash+c.CacheNonce, time.Now())
+	save, restore := nuget.Keys(sdk.OSArch(), dir, hash+c.CacheNonce, time.Now())
 	_, err = client.RestoreCache(ctx, restore, sdk.WithStepName("Restoring NuGet package cache"))
 	sdk.LogCacheErr("restore NuGet packages", err)
 	err = client.AtTeardown().SaveCache(ctx, save, []string{dir}, sdk.WithStepName("Saving NuGet package cache"))

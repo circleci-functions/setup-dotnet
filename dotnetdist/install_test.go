@@ -15,6 +15,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"sync/atomic"
 	"testing"
 
@@ -82,8 +83,8 @@ func TestInstall_SideBySide(t *testing.T) {
 		assert.Assert(t, installed)
 	}
 
-	assert.DeepEqual(t, strings(root.Versions(dotnetversion.SDK)), []string{"10.0.402", "8.0.426"})
-	assert.DeepEqual(t, strings(root.Hosts()), []string{"10.0.13", "8.0.32"})
+	assert.DeepEqual(t, versionStrings(root.Versions(dotnetversion.SDK)), []string{"10.0.402", "8.0.426"})
+	assert.DeepEqual(t, versionStrings(root.Hosts()), []string{"10.0.13", "8.0.32"})
 	assert.Equal(t, read(t, root.Dir(), "dotnet"), "host 10", "an older archive must not replace a newer host")
 	assert.Equal(t, read(t, root.Dir(), "LICENSE.txt"), "licence 10.0.13")
 	assert.Assert(t, noStaging(t, root.Dir()))
@@ -184,7 +185,8 @@ func TestInstall_ArchiveCache(t *testing.T) {
 		assert.Assert(t, os.IsNotExist(err), "the archive is removed once installed")
 	}
 	assert.Equal(t, srv.requests.Load(), int32(1), "the second job restores the archive instead of downloading it")
-	assert.DeepEqual(t, cache.saved, []string{"setup-dotnet-archive-v1-dotnet-sdk-10.0.402-linux-x64.tar.gz"})
+	assert.Equal(t, len(cache.saved), 1)
+	assert.Assert(t, strings.HasPrefix(cache.saved[0], "setup-dotnet-archive-v1-dotnet-sdk-10.0.402-linux-x64.tar.gz-"), cache.saved[0])
 }
 
 func TestPlatformRID(t *testing.T) {
@@ -310,7 +312,7 @@ func parse(t *testing.T, s string) dotnetversion.Version {
 	return v
 }
 
-func strings(vs []dotnetversion.Version) []string {
+func versionStrings(vs []dotnetversion.Version) []string {
 	var out []string
 	for _, v := range vs {
 		out = append(out, v.String())
