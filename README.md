@@ -87,8 +87,11 @@ runtimes sit side by side and `dotnet` sees all of them.
   writable, so cmd, PowerShell and bash steps all run it. Otherwise
   `%LOCALAPPDATA%\Microsoft\dotnet`.
 
-A later bash step also gets `DOTNET_ROOT`, for apps and global tools started by
-name, and the global tools directory on `PATH`.
+Apps and global tools find the installation too. On Linux and macOS
+setup-dotnet registers it in `/etc/dotnet/install_location_<arch>`, as root
+or with passwordless `sudo`, which is where an app looks in any shell. A
+later bash step also gets `DOTNET_ROOT` and the global tools directory on
+`PATH`.
 
 When the installation holds a newer SDK than the one asked for, which happens
 when installing next to an existing .NET, `dotnet` uses the newest unless a

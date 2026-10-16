@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -181,4 +182,38 @@ func realPath(p string) string {
 		return r
 	}
 	return filepath.Clean(p)
+}
+
+// RegisterDir holds .NET's registered install locations on Linux and macOS.
+const RegisterDir = "/etc/dotnet"
+
+// Register records root as the .NET install location for arch, which is where
+// an apphost started from any shell looks when DOTNET_ROOT is not set. It
+// writes dir/install_location_<arch>, as root or with sudo -n, and returns
+// that path. Windows keeps the location in the registry instead, so there it
+// does nothing.
+func Register(dir, root, arch string) (string, error) {
+	if runtime.GOOS == "windows" {
+		return "", nil
+	}
+	path := filepath.Join(dir, "install_location_"+arch)
+	if b, err := os.ReadFile(path); err == nil && strings.TrimSpace(string(b)) == root { //nolint:gosec // a fixed system path
+		return path, nil
+	}
+	content := root + "\n"
+	if err := os.MkdirAll(dir, 0o755); err == nil { //nolint:gosec // the location is world-readable by design
+		if err := os.WriteFile(path, []byte(content), 0o644); err == nil { //nolint:gosec // as above
+			return path, nil
+		}
+	}
+	sudo, err := exec.LookPath("sudo")
+	if err != nil {
+		return "", fmt.Errorf("writing %s needs root", path)
+	}
+	cmd := exec.Command(sudo, "-n", "sh", "-c", `mkdir -p "$(dirname "$1")" && cat > "$1"`, "sh", path) //nolint:gosec // fixed arguments
+	cmd.Stdin = strings.NewReader(content)
+	if out, err := cmd.CombinedOutput(); err != nil {
+		return "", fmt.Errorf("writing %s with sudo: %w: %s", path, err, strings.TrimSpace(string(out)))
+	}
+	return path, nil
 }

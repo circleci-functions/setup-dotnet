@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -42,6 +43,8 @@ type installCmd struct {
 	ConfigFile string `help:"Existing NuGet.config whose sources matching --source-url get the credentials. Empty is the nuget.config in the working directory."`
 	TokenEnv   string `default:"NUGET_AUTH_TOKEN" help:"Name of the environment variable holding the token for --source-url."`
 
+	CacheNonce  string `hidden:"" help:"Partition the caches, so a test run cannot restore an earlier run's."`
+	RegisterDir string `hidden:"" help:"Directory to register the install location in, in place of /etc/dotnet."`
 	MetadataURL string `hidden:"" help:"Release metadata base URL."`
 	DailyURL    string `hidden:"" help:"Daily build base URL."`
 }
@@ -251,7 +254,7 @@ func (c *installCmd) install(ctx context.Context, client *sdk.Client, r *resolve
 	if !pathlink.Writable(root.Dir()) {
 		return fmt.Errorf("cannot write to %s; set --install-dir to a writable directory", root.Dir())
 	}
-	inst := &dotnetdist.Installer{Root: root, CacheDir: archiveDir(), HTTP: http.DefaultClient, Log: os.Stderr}
+	inst := &dotnetdist.Installer{Root: root, CacheDir: archiveDir(), CacheKeySuffix: c.CacheNonce, HTTP: http.DefaultClient, Log: os.Stderr}
 	if c.Cache && c.SDKCache {
 		inst.Cache = archiveCache{client: client}
 	}
@@ -323,7 +326,11 @@ func satisfiesAll(root dotnetdist.Root, wants []want, quality, channel string) b
 // DOTNET_ROOT and the global tools directory to bash steps.
 func (c *installCmd) putOnPath(root, existing string, p dotnetdist.Platform, crossArch bool) error {
 	var path []string
-	if existing == "" || !sameDir(root, existing) {
+	if existing != "" && sameDir(root, existing) {
+		if bin, err := lookDotnet(); err == nil {
+			logf("dotnet resolves from %s", filepath.Dir(bin))
+		}
+	} else {
 		res, err := dotnetpath.Link(dotnetpath.Options{Root: root})
 		if err != nil {
 			return err
@@ -334,6 +341,11 @@ func (c *installCmd) putOnPath(root, existing string, p dotnetdist.Platform, cro
 			path = append(path, root)
 		} else {
 			logf("dotnet resolves from %s", res.Dir)
+		}
+		if loc, err := dotnetpath.Register(cmp.Or(c.RegisterDir, dotnetpath.RegisterDir), root, p.Arch); err != nil {
+			logf("apps started outside bash will not find .NET: %v", err)
+		} else if loc != "" {
+			logf("registered %s as the .NET install location in %s", root, loc)
 		}
 	}
 	if tools, err := dotnetpath.ToolsDir(); err == nil {
@@ -442,7 +454,7 @@ func (c *installCmd) setUpNuGetCache(ctx context.Context, client *sdk.Client, ro
 		logf("NuGet cache skipped: %v", err)
 		return
 	}
-	save, restore := nuget.Keys(sdk.OSArch(), hash, time.Now())
+	save, restore := nuget.Keys(sdk.OSArch(), hash+c.CacheNonce, time.Now())
 	_, err = client.RestoreCache(ctx, restore, sdk.WithStepName("Restoring NuGet package cache"))
 	sdk.LogCacheErr("restore NuGet packages", err)
 	err = client.AtTeardown().SaveCache(ctx, save, []string{dir}, sdk.WithStepName("Saving NuGet package cache"))

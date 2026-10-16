@@ -85,3 +85,18 @@ func TestToolsDir(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Equal(t, got, filepath.Join("/cli", ".dotnet", "tools"))
 }
+
+func TestRegister(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows registers .NET in the registry")
+	}
+	dir := filepath.Join(t.TempDir(), "etc", "dotnet")
+	for _, root := range []string{"/home/u/.dotnet", "/opt/dotnet"} {
+		p, err := dotnetpath.Register(dir, root, "x64")
+		assert.NilError(t, err)
+		assert.Equal(t, p, filepath.Join(dir, "install_location_x64"))
+		b, err := os.ReadFile(p)
+		assert.NilError(t, err)
+		assert.Equal(t, string(b), root+"\n")
+	}
+}

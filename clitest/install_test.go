@@ -86,6 +86,13 @@ func TestInstall_LinksAndExports(t *testing.T) {
 	assert.Assert(t, strings.Contains(out, "dotnet resolves from "+j.sandbox.BinDir), out)
 	assert.Assert(t, strings.Contains(out, ".NET SDK 10.0.402 is the one dotnet uses"), out)
 
+	if runtime.GOOS != "windows" {
+		loc := filepath.Join(j.sandbox.InstallDir, "etc-dotnet", "install_location_"+platformArch())
+		b, err := os.ReadFile(loc)
+		assert.NilError(t, err)
+		assert.Equal(t, strings.TrimSpace(string(b)), j.root())
+	}
+
 	env := j.bashEnv()
 	assert.Assert(t, strings.Contains(env, "export DOTNET_ROOT="), env)
 	assert.Assert(t, strings.Contains(env, filepath.ToSlash(filepath.Join(j.root()))), env)

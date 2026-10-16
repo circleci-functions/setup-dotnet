@@ -24,8 +24,10 @@ type Installer struct {
 	CacheDir string
 	// Cache is nil when archives are not cached.
 	Cache Cache
-	HTTP  *http.Client
-	Log   io.Writer
+	// CacheKeySuffix partitions the cache keys.
+	CacheKeySuffix string
+	HTTP           *http.Client
+	Log            io.Writer
 }
 
 // Install puts a into the root unless the root already has it, and reports
@@ -67,7 +69,7 @@ func (i *Installer) Install(ctx context.Context, a dotnetversion.Artifact) (bool
 
 func (i *Installer) fetch(ctx context.Context, a dotnetversion.Artifact) (string, error) {
 	archivePath := filepath.Join(i.CacheDir, a.FileName())
-	key := "setup-dotnet-archive-v1-" + a.FileName()
+	key := "setup-dotnet-archive-v1-" + a.FileName() + i.CacheKeySuffix
 	if i.Cache != nil && !verify(archivePath, a.SHA512) {
 		i.Cache.Restore(ctx, key)
 	}

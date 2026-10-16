@@ -87,6 +87,9 @@ func (j *job) run(extra map[string]string, args ...string) (string, error) {
 	env := j.sandbox.Env()
 	maps.Copy(env, j.env)
 	maps.Copy(env, extra)
+	if len(args) == 0 || (args[0] != "restore" && args[0] != "test") {
+		args = append(args, "--register-dir", filepath.Join(j.sandbox.InstallDir, "etc-dotnet"))
+	}
 	r := runner.New(j.t, binaryPath, runner.WithSandboxEnv(env), runner.WithCmdDir(j.wd))
 	_, err := r.Run(args...)
 	return r.StdoutString() + r.StderrString(), err
@@ -309,8 +312,12 @@ func standardReleases(t *testing.T, missing ...string) *releases {
 	return r
 }
 
+func platformArch() string {
+	return map[string]string{"amd64": "x64", "arm64": "arm64"}[runtime.GOARCH]
+}
+
 func platformRID() string {
-	arch := map[string]string{"amd64": "x64", "arm64": "arm64"}[runtime.GOARCH]
+	arch := platformArch()
 	switch runtime.GOOS {
 	case "darwin":
 		return "osx-" + arch
