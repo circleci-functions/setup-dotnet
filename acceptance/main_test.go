@@ -53,3 +53,11 @@ func runTests(m *testing.M) (int, error) {
 	}
 	return m.Run(), nil
 }
+
+// acceptanceVersion is the dotnet-version the suite installs.
+func acceptanceVersion() string {
+	if v := os.Getenv("SETUP_DOTNET_ACCEPTANCE_VERSION"); v != "" {
+		return v
+	}
+	return "10.0"
+}

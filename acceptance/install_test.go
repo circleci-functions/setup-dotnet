@@ -27,6 +27,8 @@ type job struct {
 	path    string
 }
 
+// newJob, unlike the real-PATH test, keeps setup-dotnet's links and installs
+// inside a sandbox, so these tests are safe to run anywhere.
 func newJob(t *testing.T) *job {
 	t.Helper()
 	s := sdktest.NewSandbox(t, sdktest.WithLiveCache())
@@ -41,6 +43,9 @@ func (j *job) run(args ...string) string {
 		if v, ok := os.LookupEnv(name); ok {
 			env[name] = v
 		}
+	}
+	if len(args) == 0 || (args[0] != "restore" && args[0] != "test") {
+		args = append(args, "--install-dir", j.sandbox.InstallDir, "--register-dir", filepath.Join(j.sandbox.Home, "etc-dotnet"))
 	}
 	r := runner.New(j.t, binaryPath, runner.WithSandboxEnv(env), runner.WithCmdDir(j.wd))
 	_, err := r.Run(args...)
@@ -80,11 +85,11 @@ func lookPath(name, path string) (string, error) {
 
 func TestAcceptance_InstallsAnSDKAndARuntime(t *testing.T) {
 	j := newJob(t)
-	out := j.run("--dotnet-version", "10.0.x", "--runtime-version", "8.0", "--no-nuget-cache")
-	assert.Assert(t, strings.Contains(out, ".NET SDK 10.0."), out)
+	out := j.run("--dotnet-version", acceptanceVersion(), "--runtime-version", "8.0", "--no-nuget-cache")
+	assert.Assert(t, strings.Contains(out, ".NET SDK "+acceptanceVersion()+"."), out)
 
 	sdks := j.dotnet("--list-sdks")
-	assert.Assert(t, strings.Contains(sdks, "10.0."), sdks)
+	assert.Assert(t, strings.Contains(sdks, acceptanceVersion()+"."), sdks)
 	runtimes := j.dotnet("--list-runtimes")
 	assert.Assert(t, strings.Contains(runtimes, "Microsoft.NETCore.App 8.0."), runtimes)
 	assert.Assert(t, strings.Contains(runtimes, "Microsoft.AspNetCore.App 8.0."), runtimes)

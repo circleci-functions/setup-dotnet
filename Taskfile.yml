@@ -22,9 +22,9 @@ tasks:
       - go tool gotestsum --junitfile test-results/unit.xml -- ./...
 
   acceptance:
-    desc: Run acceptance tests (network required)
+    desc: Run acceptance tests against real .NET downloads (network required; safe to run locally)
     cmds:
-      - go tool gotestsum --junitfile test-results/acceptance.xml --format standard-verbose -- -tags acceptance -timeout 20m ./acceptance/...
+      - go tool gotestsum --junitfile test-results/acceptance.xml --format standard-verbose -- -tags acceptance -timeout 20m ./acceptance/... {{.CLI_ARGS}}
 
   tidy:
     desc: Tidy go.mod / go.sum
@@ -86,6 +86,38 @@ tasks:
           done
           echo "built dist/tools/$os/$arch/{test2json,gotestsum}${ext}"
         done
+
+  smoke-local:
+    desc: >-
+      Run the cross-platform smoke check in a container, with the same command
+      the smoke jobs use. IMAGE picks the executor to stand in for, e.g.
+      IMAGE=mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine for a musl
+      distro, or IMAGE=mcr.microsoft.com/dotnet/sdk:9.0 for one with .NET
+      already on PATH.
+    deps: [dry-run, build-acceptance, build-tools]
+    vars:
+      IMAGE: '{{.IMAGE | default "cimg/base:stable"}}'
+      VERSION: '{{.VERSION | default "10.0"}}'
+    cmds:
+      - |
+        set -eu
+        docker run --rm \
+          -v "$PWD/dist:/home/circleci/project/dist" \
+          -w /home/circleci/project \
+          -e SETUP_DOTNET_DISPOSABLE=1 \
+          -e SETUP_DOTNET_BINARY=./dist/setup-dotnet/linux/amd64/setup-dotnet \
+          -e SETUP_DOTNET_ACCEPTANCE_VERSION="{{.VERSION}}" \
+          {{.IMAGE}} \
+          sh -c '
+            mkdir -p test-results
+            ./dist/tools/linux/amd64/gotestsum \
+              --junitfile test-results/smoke.xml \
+              --format standard-verbose \
+              --raw-command -- \
+              ./dist/tools/linux/amd64/test2json -p acceptance \
+                ./dist/acceptance/linux/amd64/acceptance \
+                -test.v=test2json -test.run TestAcceptance_InstallsOntoTheRealPath
+          '
 
   ci:
     desc: Run everything CI runs (lint + test + dry-run)
