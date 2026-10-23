@@ -44,7 +44,6 @@ jobs:
     executor: go
     steps:
       - checkout
-      - toolkit/private-mod-init
       - restore_cache:
           keys:
             - setup-dotnet-go-{{ checksum "go.sum" }}-
@@ -67,7 +66,6 @@ jobs:
     executor: go
     steps:
       - checkout
-      - toolkit/private-mod-init
       - restore_cache:
           keys:
             - setup-dotnet-go-{{ checksum "go.sum" }}-
@@ -91,7 +89,6 @@ jobs:
     executor: go
     steps:
       - checkout
-      - toolkit/private-mod-init
       - restore_cache:
           keys:
             - setup-dotnet-go-{{ checksum "go.sum" }}-
@@ -150,12 +147,9 @@ jobs:
 workflows:
   test-publish:
     jobs:
-      - test:
-          context: [github-readonly]
-      - acceptance:
-          context: [github-readonly]
-      - build:
-          context: [github-readonly]
+      - test
+      - acceptance
+      - build
       - smoke:
           name: smoke-linux-amd64
           e: base
