@@ -2,6 +2,7 @@ package dotnetpath_test
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -71,7 +72,24 @@ func TestExport(t *testing.T) {
 	assert.NilError(t, err)
 	got := string(b)
 	assert.Assert(t, strings.Contains(got, `export DOTNET_ROOT='/home/it'\''s/.dotnet'`+"\n"), got)
-	assert.Assert(t, strings.Contains(got, `export PATH='/home/u/.dotnet/tools':"$PATH"`+"\n"), got)
+	assert.Assert(t, strings.Contains(got, `export PATH='/home/u/.dotnet/tools':$PATH`+"\n"), got)
+}
+
+// bash sources $BASH_ENV when it starts, as each later step does, so check what
+// it reads back, not just the text.
+func TestExport_SourcedByBash(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("PATH entries are cygpath expressions on Windows")
+	}
+	bashEnv := filepath.Join(t.TempDir(), "bash_env")
+	t.Setenv("BASH_ENV", bashEnv)
+
+	assert.NilError(t, dotnetpath.Export(map[string]string{"DOTNET_ROOT": "/home/it's/.dotnet"}, []string{"/home/u/.dotnet/tools"}))
+	out, err := exec.Command("bash", "-c", `printf '%s\n%s' "$DOTNET_ROOT" "$PATH"`).Output()
+	assert.NilError(t, err)
+	root, path, _ := strings.Cut(string(out), "\n")
+	assert.Equal(t, root, "/home/it's/.dotnet")
+	assert.Equal(t, path, "/home/u/.dotnet/tools:"+os.Getenv("PATH"))
 }
 
 func TestExport_NoBashEnv(t *testing.T) {
