@@ -132,21 +132,26 @@ func Export(vars map[string]string, path []string) error {
 	if os.Getenv("BASH_ENV") == "" {
 		return errors.New("BASH_ENV is not set")
 	}
-	quoted := make(map[string]string, len(vars)+1)
+	values := make(map[string]string, len(vars))
 	for k, v := range vars {
 		if runtime.GOOS == "windows" {
 			v = filepath.ToSlash(v)
 		}
-		quoted[k] = shellQuote(v)
+		values[k] = v
 	}
-	if len(path) > 0 {
-		entries := make([]string, 0, len(path))
-		for _, p := range path {
-			entries = append(entries, shellPath(p))
-		}
-		quoted["PATH"] = strings.Join(entries, ":") + `:"$PATH"`
+	// ExportEnvVars quotes each value; PATH goes through AddToPath, which
+	// doesn't, so $PATH and cygpath are expanded when the step runs.
+	if err := bashenv.ExportEnvVars(values); err != nil {
+		return err
 	}
-	return bashenv.ExportEnvVars(quoted)
+	if len(path) == 0 {
+		return nil
+	}
+	entries := make([]string, 0, len(path))
+	for _, p := range path {
+		entries = append(entries, shellPath(p))
+	}
+	return bashenv.AddToPath(strings.Join(entries, ":"))
 }
 
 func shellPath(p string) string {
