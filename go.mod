@@ -3,8 +3,8 @@ module github.com/circleci-functions/setup-dotnet
 go 1.26.4
 
 require (
-	github.com/alecthomas/kong v1.15.0
-	github.com/bmatcuk/doublestar/v4 v4.10.3
+	github.com/alecthomas/kong v1.17.0
+	github.com/bmatcuk/doublestar/v4 v4.10.4
 	github.com/circleci-functions/toolkit v0.5.0
 	gotest.tools/v3 v3.5.2
 )
