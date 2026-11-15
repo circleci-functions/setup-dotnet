@@ -26,12 +26,12 @@ executors:
   # musl, with the libraries .NET needs and no .NET.
   alpine:
     docker:
-      - image: mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine
+      - image: mcr.microsoft.com/dotnet/runtime-deps:11.0-alpine
   # Ships its own .NET on PATH, a different major from the one the smoke test
   # installs, so the test shows setup-dotnet's comes first.
   dotnet:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:9.0
+      - image: mcr.microsoft.com/dotnet/sdk:11.0
   arm64:
     machine:
       image: ubuntu-2404:current
